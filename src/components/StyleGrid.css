@@ -1,0 +1,337 @@
+.style-container {
+  width: 100%;
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.gender-filter {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.gender-filter button {
+  margin: 0 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+.gender-filter button:hover {
+  background-color: #e0e0e0;
+}
+
+.gender-filter button.active {
+  background: #333;
+  color: white;
+}
+
+.styles-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* When showing single gender */
+.styles-layout.single-gender {
+  grid-template-columns: 1fr; /* Full width for single gender view */
+  max-width: 1200px; /* Limit maximum width */
+  margin: 0 auto;
+}
+
+.styles-column {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  width: 100%;
+}
+
+.styles-column h2 {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+
+/* Center the title when showing single gender */
+.single-gender .styles-column h2 {
+  text-align: center;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.style-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  width: 100%;
+}
+
+/* Adjust grid width for single gender view */
+.single-gender .style-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Default layout */
+.style-grid {
+  grid-template-columns: 1fr; /* Start with 1 column by default */
+}
+
+.style-item {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.style-item img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.style-item:hover {
+  transform: translateY(-5px);
+}
+
+.style-info {
+  padding: 15px;
+  margin: 0;
+  text-align: center;
+  background-color: white;
+}
+
+.style-info h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.1em;
+}
+
+.style-info p {
+  margin: 0;
+  font-size: 0.9em;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* Small screens (phones) */
+@media (max-width: 768px) {
+  .style-grid {
+    grid-template-columns: 1fr; /* Only one item across */
+    justify-items: center; /* Center items horizontally */
+  }
+
+  .style-item {
+    max-width: 90%; /* Adjust size to fit better on smaller screens */
+  }
+}
+
+/* Medium screens (tablets) */
+@media (min-width: 769px) and (max-width: 1200px) {
+  .style-grid {
+    grid-template-columns: 1fr 1fr; /* Two items across */
+  }
+}
+
+/* Large screens (laptops and desktops) */
+@media (min-width: 1200px) {
+  .style-grid {
+    grid-template-columns: repeat(3, 1fr); /* Max 3 items across */
+  }
+}
+
+.style-item.selected {
+  border: 3px solid #333;
+  transform: translateY(-5px);
+}
+
+/* Center selected grid items */
+.style-grid.selected {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  height: 100vh;
+}
+
+.description-form {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.description-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  resize: vertical;
+}
+
+.description-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.description-form button:disabled {
+  background-color: #ccc;
+}
+
+.description-form-container {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+/* Auth-related styles */
+.auth-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.login-button {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.login-button:hover {
+  background: #f5f5f5;
+}
+
+.google-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.profile-image {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.logout-button {
+  font-size: 12px;
+  padding: 4px 8px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background: #e0e0e0;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.customize-button {
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.customize-button:hover {
+  background-color: #e0e0e0;
+}
+
+.customizer-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+  z-index: 1000;
+  width: 90%;
+  max-width: 800px;
+  height: 90vh;
+  max-height: 800px;
+  overflow: auto;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.close-button:hover {
+  color: #666;
+}
+
+/* Overlay for modals */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
