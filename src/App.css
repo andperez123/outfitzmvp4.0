@@ -1,10 +1,11 @@
 .App {
   position: relative;
   min-height: 100vh;
+  background: #FFFFFF;
 }
 
 main {
-  padding-top: 80px; /* Make room for the auth header */
+  padding-top: 0;
 }
 
 .App-logo {

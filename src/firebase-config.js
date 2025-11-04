@@ -20,12 +20,20 @@ console.log('Firebase Config:', {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const analytics = getAnalytics(app);
 
-// Initialize Auth with explicit configuration
+// Initialize Analytics only if measurementId is provided
+let analytics = null;
+try {
+  if (firebaseConfig.measurementId) {
+    analytics = getAnalytics(app);
+  }
+} catch (error) {
+  console.warn('Analytics initialization failed:', error);
+}
+
+// Initialize Auth
 export const auth = getAuth(app);
 auth.useDeviceLanguage();
-auth.config.authDomain = 'outfitz-dfd41.firebaseapp.com'; // Force Firebase domain
 
 // Configure Google provider
 export const googleProvider = new GoogleAuthProvider();
@@ -33,4 +41,4 @@ googleProvider.setCustomParameters({
     prompt: 'select_account'
 });
 
-console.log('Auth Provider configured with domain:', auth.config.authDomain);
+export { analytics };
