@@ -69,8 +69,8 @@ Keep descriptions concise and focus on creating a cohesive, practical outfit tha
             const outfitData = await fetchOutfitData(prompt);
             console.log("2. API Response received:", outfitData);
             
-            const dallePrompt = outfitData.dallePrompt;
-            console.log("3. DALL-E Prompt:", dallePrompt);
+            const imagePrompt = outfitData.imagePrompt || outfitData.dallePrompt;
+            console.log("3. Image Prompt:", imagePrompt);
 
             const outfitComponents = parseDescription(outfitData.description);
             console.log("4. Parsed Components:", outfitComponents);
@@ -78,7 +78,7 @@ Keep descriptions concise and focus on creating a cohesive, practical outfit tha
             setGeneratedOutfit({
                 title: outfitData.title || 'Custom Outfit',
                 description: outfitData.description || 'No description provided',
-                imagePrompt: dallePrompt,
+                imagePrompt: imagePrompt,
                 imageUrl: 'pending',
                 components: outfitComponents
             });
@@ -87,7 +87,7 @@ Keep descriptions concise and focus on creating a cohesive, practical outfit tha
 
             console.log("5. Starting image generation...");
             try {
-                const imageUrl = await generateImage(dallePrompt);
+                const imageUrl = await generateImage(imagePrompt);
                 setGeneratedOutfit(prev => ({
                     ...prev,
                     imageUrl
