@@ -13,9 +13,11 @@ This guide will help you deploy the Outfitz application to a live environment.
 
 ## Environment Variables Required
 
+### Client-Side Environment Variables
+
 Your application needs these environment variables in your live deployment:
 
-### Firebase Configuration
+#### Firebase Configuration
 ```
 REACT_APP_FIREBASE_API_KEY=your_firebase_api_key_here
 REACT_APP_FIREBASE_AUTH_DOMAIN=outfitz-dfd41.firebaseapp.com
@@ -26,12 +28,29 @@ REACT_APP_FIREBASE_APP_ID=your_app_id_here
 REACT_APP_FIREBASE_MEASUREMENT_ID=your_measurement_id_here
 ```
 
-### OpenAI Configuration
-```
-REACT_APP_OPENAI_API_KEY=sk-your_openai_api_key_here
+#### OpenAI Configuration
+**⚠️ IMPORTANT:** The OpenAI API key is NO LONGER stored in client-side environment variables!
+
+The API key is now securely stored in Firebase Cloud Functions. See `FIREBASE_FUNCTIONS_SETUP.md` for setup instructions.
+
+### Firebase Functions Configuration
+
+**Required:** Set up Firebase Cloud Functions with your OpenAI API key:
+
+```bash
+# Set the API key in Firebase Functions
+firebase functions:config:set openai.api_key="sk-your-openai-api-key-here"
+
+# OR use secrets (recommended)
+firebase functions:secrets:set OPENAI_API_KEY
 ```
 
-**⚠️ Important:** Replace the OpenAI API key with your actual production key!
+Then deploy the functions:
+```bash
+firebase deploy --only functions
+```
+
+See `FIREBASE_FUNCTIONS_SETUP.md` for complete setup instructions.
 
 ---
 
@@ -56,8 +75,13 @@ REACT_APP_OPENAI_API_KEY=sk-your_openai_api_key_here
 4. **Add Environment Variables**
    - Click "Environment Variables"
    - Add all Firebase variables (prefixed with `REACT_APP_`)
-   - Add `REACT_APP_OPENAI_API_KEY` with your production key
+   - **Do NOT add `REACT_APP_OPENAI_API_KEY`** - it's now handled by Firebase Functions
    - Make sure to add them for **Production**, **Preview**, and **Development**
+   
+5. **Set Up Firebase Functions**
+   - Follow instructions in `FIREBASE_FUNCTIONS_SETUP.md`
+   - Set the OpenAI API key in Firebase Functions config
+   - Deploy the functions: `firebase deploy --only functions`
 
 5. **Deploy**
    - Click "Deploy"
@@ -156,13 +180,26 @@ REACT_APP_OPENAI_API_KEY=sk-your_openai_api_key_here
 
 ### OpenAI API Key
 
+**⚠️ IMPORTANT:** The OpenAI API key is NO LONGER stored in client-side environment variables!
+
+The API key must be configured in Firebase Cloud Functions:
+
 1. Go to [OpenAI Platform](https://platform.openai.com/)
 2. Sign in to your account
 3. Navigate to **API Keys** section
-4. Click **Create new secret key**
+4. Click **Create new secret key** (or use existing one)
 5. Copy the key (starts with `sk-`)
-6. **⚠️ Important:** Use a different key for production than development
-7. Set usage limits and billing alerts in OpenAI dashboard
+6. Set the key in Firebase Functions:
+   ```bash
+   firebase functions:config:set openai.api_key="sk-your-key-here"
+   # OR
+   firebase functions:secrets:set OPENAI_API_KEY
+   ```
+7. Deploy the functions: `firebase deploy --only functions`
+8. **⚠️ Important:** Use a different key for production than development
+9. Set usage limits and billing alerts in OpenAI dashboard
+
+See `FIREBASE_FUNCTIONS_SETUP.md` for complete setup instructions.
 
 ---
 
@@ -171,7 +208,8 @@ REACT_APP_OPENAI_API_KEY=sk-your_openai_api_key_here
 - [ ] All environment variables are set in deployment platform
 - [ ] Firebase Authentication is enabled (Google provider)
 - [ ] Firebase Firestore rules are configured
-- [ ] OpenAI API key is set with production key
+- [ ] Firebase Functions are deployed
+- [ ] OpenAI API key is set in Firebase Functions config
 - [ ] Test the app on the live URL
 - [ ] Test Google Sign-in
 - [ ] Test outfit generation
@@ -235,8 +273,11 @@ If using Firebase Hosting, create `firebase.json`:
 - Verify API keys are correct
 
 ### OpenAI API Errors
-- Check API key is correct
+- Check API key is set in Firebase Functions config
+- Verify functions are deployed: `firebase deploy --only functions`
+- Check Firebase Functions logs: `firebase functions:log`
 - Verify you have credits in OpenAI account
+- Ensure user is authenticated (functions require auth)
 - Check API usage limits
 
 ---
@@ -244,8 +285,10 @@ If using Firebase Hosting, create `firebase.json`:
 ## Security Notes
 
 1. **Never commit `.env` files** - They're already in `.gitignore`
-2. **Use different API keys** for development and production
-3. **Set up billing alerts** in OpenAI dashboard
+2. **API key is stored in Firebase Functions** (server-side, secure)
+3. **Use different API keys** for development and production (set in Firebase Functions)
+4. **Set up billing alerts** in OpenAI dashboard
+5. **Monitor usage** in Firebase Console and OpenAI dashboard
 4. **Configure Firebase Security Rules** for Firestore
 5. **Enable Firebase App Check** for additional security (optional)
 

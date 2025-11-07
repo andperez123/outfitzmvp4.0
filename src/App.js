@@ -1,14 +1,21 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import StyleGrid from './components/StyleGrid';
+import Profile from './components/Profile';
 
 function App() {
   return (
-    <div className="App">
-      <main>
-        <StyleGrid />
-      </main>
-    </div>
+    <Router>
+      <div className="App">
+        <main>
+          <Routes>
+            <Route path="/" element={<StyleGrid />} />
+            <Route path="/profile" element={<Profile />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 }
 

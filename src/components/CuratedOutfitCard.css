@@ -1,0 +1,192 @@
+.curated-outfit-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.curated-outfit-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.outfit-card-image-container {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    background: #f3f4f6;
+    position: relative;
+}
+
+.outfit-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.outfit-card-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    background: #f9fafb;
+}
+
+.outfit-card-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 1rem;
+}
+
+.outfit-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+.outfit-card-description {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.outfit-card-products {
+    margin-top: 0.5rem;
+}
+
+.products-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 0.75rem 0;
+}
+
+.products-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.product-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+}
+
+.product-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.product-price {
+    font-size: 0.75rem;
+    color: #059669;
+    font-weight: 600;
+}
+
+.product-link-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.product-link-btn:hover {
+    background: #5568d3;
+    transform: translateY(-1px);
+}
+
+.outfit-card-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f0fdf4;
+    border-radius: 8px;
+    border: 2px solid #10b981;
+    margin-top: auto;
+}
+
+.total-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #065f46;
+}
+
+.total-amount {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #059669;
+}
+
+.use-outfit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.use-outfit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.use-outfit-btn:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .outfit-card-image-container {
+        height: 250px;
+    }
+
+    .outfit-card-content {
+        padding: 1.25rem;
+    }
+
+    .product-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .product-link-btn {
+        width: 100%;
+    }
+}
+

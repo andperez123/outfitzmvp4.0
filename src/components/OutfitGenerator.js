@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MaleQuestions from './MaleQuestions';
 import FemaleQuestions from './FemaleQuestions';
 import PhysicalAttributes from './PhysicalAttributes';
@@ -22,7 +22,7 @@ class ErrorBoundary extends React.Component {
         console.error('Error:', error, errorInfo);
     }
 
-    render() {
+render() {
         if (this.state.hasError) {
             return <div>Something went wrong. Please try again.</div>;
         }
@@ -50,36 +50,54 @@ const OutfitGenerator = ({ onClose }) => {
         handleCloseModal
     } = useOutfitGeneration();
 
-    // Get profile functionality from hook
+    // Get profile functionality from hook - includes saved profile data
     const {
         user,
+        gender: savedGender,
         bodyType,
-        setBodyType,
         ethnicity,
-        setEthnicity,
         height,
-        setHeight,
         hairType,
+        presentation,
+        styleTags,
+        colors,
+        budget,
+        location,
+        setBodyType,
+        setEthnicity,
+        setHeight,
         setHairType,
         isProfileSaved,
         handleGoogleSignIn,
         saveUserProfile
     } = useProfile();
 
+    // Initialize gender from saved profile when component loads
+    useEffect(() => {
+        if (savedGender && !gender) {
+            setGender(savedGender);
+        }
+    }, [savedGender, gender]);
+
     // Replace the old handleSubmit with this new one
     const onSubmit = (e) => {
         e.preventDefault();
+        // Use saved profile data if available, otherwise use form values
+        // Empty strings will be filtered out in the prompt builder
         handleOutfitSubmit({
-            gender,
-            bodyType,
-            ethnicity,
-            height,
-            hairType,
-            vibe,
-            comfortLevel,
-            adventurous,
-            focus,
-            userInput
+            gender: gender || savedGender || '',
+            bodyType: bodyType || '',
+            ethnicity: ethnicity || '',
+            height: height || '',
+            hairType: hairType || '',
+            presentation: presentation || '',
+            styleTags: styleTags || [],
+            colors: colors || [],
+            vibe: vibe || '',
+            comfortLevel: comfortLevel || '',
+            adventurous: adventurous || '',
+            focus: focus || '',
+            userInput: userInput || ''
         });
     };
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './StyleGrid.css';
 import { useOutfitGeneration } from '../hooks/useOutfitGeneration';
 import { useProfile } from '../hooks/useProfile';
@@ -6,8 +7,10 @@ import { auth } from '../firebase-config';
 import OutfitModal from './OutfitModal';
 import ErrorBoundary from './ErrorBoundary';
 import OutfitGenerator from './OutfitGenerator';
+import CuratedOutfitsSection from './CuratedOutfitsSection';
 
 const StyleGrid = () => {
+  const navigate = useNavigate();
   const [outfitDescription, setOutfitDescription] = useState('');
   const [showCustomizer, setShowCustomizer] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -32,7 +35,17 @@ const StyleGrid = () => {
 
   const {
     user,
-    handleGoogleSignIn
+    handleGoogleSignIn,
+    gender,
+    bodyType,
+    ethnicity,
+    height,
+    hairType,
+    presentation,
+    styleTags,
+    colors,
+    budget,
+    location
   } = useProfile();
 
   const {
@@ -44,15 +57,16 @@ const StyleGrid = () => {
     handleCloseModal
   } = useOutfitGeneration();
 
-  // Curated collections - featured styles
-  const curatedCollections = [
+  // All available curated collections
+  const allCuratedCollections = [
     {
       id: 'date-night',
       title: 'Date Night',
       description: 'Polished & Effortless',
       image: '/images/styles/WClassicPreppy.png',
       style: 'Classic/Preppy',
-      gender: 'all'
+      gender: 'all',
+      tags: ['classic', 'preppy', 'formal', 'elegant']
     },
     {
       id: 'work-mode',
@@ -60,7 +74,8 @@ const StyleGrid = () => {
       description: 'Tailored & Sharp',
       image: '/images/styles/Mpreppy.png',
       style: 'Classic/Preppy',
-      gender: 'all'
+      gender: 'all',
+      tags: ['classic', 'preppy', 'business', 'professional']
     },
     {
       id: 'casual',
@@ -68,7 +83,8 @@ const StyleGrid = () => {
       description: 'Relaxed & Comfortable',
       image: '/images/styles/WStreetwear.png',
       style: 'Casual/Streetwear',
-      gender: 'all'
+      gender: 'all',
+      tags: ['casual', 'streetwear', 'relaxed']
     },
     {
       id: 'athleisure',
@@ -76,9 +92,81 @@ const StyleGrid = () => {
       description: 'Sleek & Athletic',
       image: '/images/styles/WAthlesiure.png',
       style: 'Athleisure',
-      gender: 'all'
+      gender: 'all',
+      tags: ['athleisure', 'athletic', 'sporty']
+    },
+    {
+      id: 'minimal',
+      title: 'Minimal',
+      description: 'Clean & Simple',
+      image: '/images/styles/Mminimal.png',
+      style: 'Minimal',
+      gender: 'all',
+      tags: ['minimal', 'simple', 'clean']
+    },
+    {
+      id: 'vintage',
+      title: 'Vintage',
+      description: 'Retro & Timeless',
+      image: '/images/styles/Mvintage.png',
+      style: 'Vintage',
+      gender: 'all',
+      tags: ['vintage', 'retro', 'classic']
+    },
+    {
+      id: 'streetwear',
+      title: 'Streetwear',
+      description: 'Urban & Edgy',
+      image: '/images/styles/Mstreetwear.png',
+      style: 'Streetwear',
+      gender: 'all',
+      tags: ['streetwear', 'urban', 'edgy']
+    },
+    {
+      id: 'boho',
+      title: 'Boho',
+      description: 'Free & Flowing',
+      image: '/images/styles/Mboho.png',
+      style: 'Boho',
+      gender: 'all',
+      tags: ['boho', 'bohemian', 'free-spirited']
     }
   ];
+
+  // Filter curated collections based on user profile
+  const getFilteredCollections = () => {
+    if (!user || !gender) {
+      // Show all collections if user not logged in or no gender set
+      return allCuratedCollections;
+    }
+
+    let filtered = allCuratedCollections;
+
+    // Filter by gender preference if available
+    // (Collections marked as 'all' are always shown)
+
+    // Filter by style tags if user has preferences
+    if (styleTags && styleTags.length > 0) {
+      const userTags = styleTags.map(tag => tag.toLowerCase());
+      filtered = filtered.filter(collection => {
+        // Check if any collection tags match user's style tags
+        return collection.tags.some(tag => 
+          userTags.some(userTag => 
+            tag.includes(userTag) || userTag.includes(tag)
+          )
+        );
+      });
+
+      // If filtering resulted in empty array, show all collections
+      if (filtered.length === 0) {
+        filtered = allCuratedCollections;
+      }
+    }
+
+    return filtered;
+  };
+
+  const curatedCollections = getFilteredCollections();
 
   const handleQuickSubmit = (e) => {
     e.preventDefault();
@@ -86,13 +174,16 @@ const StyleGrid = () => {
       return;
     }
 
-    // Use a default style if none selected
+    // Use saved profile data if available, otherwise use empty strings (will be filtered out)
     handleOutfitSubmit({
-      gender: 'all',
-      bodyType: '',
-      ethnicity: '',
-      height: '',
-      hairType: '',
+      gender: gender || '',
+      bodyType: bodyType || '',
+      ethnicity: ethnicity || '',
+      height: height || '',
+      hairType: hairType || '',
+      presentation: presentation || '',
+      styleTags: styleTags || [],
+      colors: colors || [],
       vibe: '',
       comfortLevel: '',
       adventurous: '',
@@ -164,6 +255,15 @@ const StyleGrid = () => {
                       <p className="user-menu-email">{user.email}</p>
                     </div>
                   </div>
+                  <button 
+                    className="user-menu-item"
+                    onClick={() => {
+                      navigate('/profile');
+                      setShowUserMenu(false);
+                    }}
+                  >
+                    View Profile
+                  </button>
                   <button 
                     className="user-menu-item"
                     onClick={() => {
@@ -261,6 +361,9 @@ const StyleGrid = () => {
             ))}
           </div>
         </div>
+
+        {/* Curated Outfits Section */}
+        <CuratedOutfitsSection />
 
         {/* Welcome Section */}
         <div className="welcome-section">

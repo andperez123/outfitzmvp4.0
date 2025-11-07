@@ -5,15 +5,6 @@
 /.pnp
 .pnp.js
 
-# Yarn specific
-/.yarn/*
-!/.yarn/patches
-!/.yarn/plugins
-!/.yarn/releases
-!/.yarn/sdks
-!/.yarn/versions
-.yarn-integrity
-
 # testing
 /coverage
 
@@ -32,12 +23,21 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Firebase
+.firebase/
+.firebaserc
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Functions
+functions/node_modules/
+functions/.env
+functions/.env.*
+
 # IDE
-.idea/
 .vscode/
-
-# cache
-.cache/
-
-# backup files
-*.bak
+.idea/
+*.swp
+*.swo
+*~
