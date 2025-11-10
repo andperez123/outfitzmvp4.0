@@ -1,13 +1,10 @@
-import { getFunctions, httpsCallable } from 'firebase/functions';
-import { auth } from '../firebase-config';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '../firebase-config';
 
 /**
  * Service for making secure OpenAI API calls through Firebase Cloud Functions
  * This replaces direct API calls to prevent API key exposure
  */
-
-// Initialize Cloud Functions
-const functions = getFunctions();
 
 /**
  * Generate outfit data using OpenAI GPT-4
@@ -16,11 +13,7 @@ const functions = getFunctions();
  */
 export const fetchOutfitData = async (prompt) => {
   try {
-    // Verify user is authenticated
-    if (!auth.currentUser) {
-      throw new Error('User must be authenticated to generate outfits');
-    }
-
+    // Allow unauthenticated users to generate outfits
     const generateOutfit = httpsCallable(functions, 'generateOutfit');
     
     const result = await generateOutfit({ prompt });
@@ -51,11 +44,7 @@ export const fetchOutfitData = async (prompt) => {
  */
 export const enhancePrompt = async (prompt, outfitComponents = {}) => {
   try {
-    // Verify user is authenticated
-    if (!auth.currentUser) {
-      throw new Error('User must be authenticated to enhance prompts');
-    }
-
+    // Allow unauthenticated users to enhance prompts
     const enhancePromptFunction = httpsCallable(functions, 'enhancePrompt');
     
     const result = await enhancePromptFunction({ 
@@ -83,11 +72,7 @@ export const enhancePrompt = async (prompt, outfitComponents = {}) => {
  */
 export const generateImage = async (prompt, options = {}) => {
   try {
-    // Verify user is authenticated
-    if (!auth.currentUser) {
-      throw new Error('User must be authenticated to generate images');
-    }
-
+    // Allow unauthenticated users to generate images
     const generateImageFunction = httpsCallable(functions, 'generateImage');
     
     const result = await generateImageFunction({ 

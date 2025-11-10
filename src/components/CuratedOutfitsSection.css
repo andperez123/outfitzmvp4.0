@@ -125,6 +125,14 @@
 .empty-state p {
     color: #6b7280;
     font-size: 1.125rem;
+    margin: 0.5rem 0;
+}
+
+.empty-state-hint {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    font-style: italic;
+    margin-top: 0.5rem;
 }
 
 @media (max-width: 768px) {

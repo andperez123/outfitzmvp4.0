@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection - users can read/write their own profile
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Saved outfits collection - users can read/write their own outfits
+    match /savedOutfits/{outfitId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+    
+    // Curated collections - PUBLIC READ (anyone can view), write requires admin
+    match /curated_collections/{collectionId} {
+      allow read: if true; // Public read access - curated content is public
+      allow write: if false; // Only admins can write (handled via backend/admin)
+      
+      // Outfits within collections - PUBLIC READ
+      match /outfits/{outfitId} {
+        allow read: if true; // Public read access
+        allow write: if false; // Only admins can write
+      }
+    }
+    
+    // New top-level outfits collection - PUBLIC READ
+    match /outfits/{outfitId} {
+      allow read: if true; // Public read access - curated content is public
+      allow write: if false; // Only admins can write (handled via backend/admin)
+    }
+    
+    // User sessions - users can create their own sessions
+    match /user_sessions/{sessionId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      allow update, delete: if false; // Sessions are immutable once created
+    }
+    
+    // Deny all other access by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+
+

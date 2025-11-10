@@ -20,14 +20,7 @@ if (!OPENAI_API_KEY) {
  * This function replaces the client-side fetchOutfitData
  */
 exports.generateOutfit = functions.https.onCall(async (data, context) => {
-  // Verify user is authenticated
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
-      'unauthenticated',
-      'User must be authenticated to generate outfits'
-    );
-  }
-
+  // Allow unauthenticated users to generate outfits
   const { prompt } = data;
 
   if (!prompt) {
@@ -107,14 +100,7 @@ exports.generateOutfit = functions.https.onCall(async (data, context) => {
  * Used by the ChatGPT image adapter
  */
 exports.enhancePrompt = functions.https.onCall(async (data, context) => {
-  // Verify user is authenticated
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
-      'unauthenticated',
-      'User must be authenticated to enhance prompts'
-    );
-  }
-
+  // Allow unauthenticated users to enhance prompts
   const { prompt, outfitComponents } = data;
 
   if (!prompt) {
@@ -200,14 +186,7 @@ Provide only the enhanced image prompt, nothing else. Do not include placeholder
  * Supports both direct DALL-E and ChatGPT-enhanced generation
  */
 exports.generateImage = functions.https.onCall(async (data, context) => {
-  // Verify user is authenticated
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
-      'unauthenticated',
-      'User must be authenticated to generate images'
-    );
-  }
-
+  // Allow unauthenticated users to generate images
   const { prompt, options = {} } = data;
 
   if (!prompt) {

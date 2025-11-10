@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from 'firebase/firestore';
+import { getFunctions } from 'firebase/functions';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -45,4 +46,7 @@ googleProvider.setCustomParameters({
 // Initialize Firestore
 export const db = getFirestore(app);
 
-export { analytics };
+// Initialize Functions
+export const functions = getFunctions(app);
+
+export { analytics, app };

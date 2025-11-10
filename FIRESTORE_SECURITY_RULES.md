@@ -25,16 +25,22 @@ service cloud.firestore {
       allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
     }
     
-    // Curated collections - read-only for all authenticated users
+    // Curated collections - PUBLIC READ (anyone can view), write requires admin
     match /curated_collections/{collectionId} {
-      allow read: if request.auth != null;
+      allow read: if true; // Public read access - curated content is public
       allow write: if false; // Only admins can write (handled via backend/admin)
       
-      // Outfits within collections
+      // Outfits within collections - PUBLIC READ
       match /outfits/{outfitId} {
-        allow read: if request.auth != null;
+        allow read: if true; // Public read access
         allow write: if false; // Only admins can write
       }
+    }
+    
+    // New top-level outfits collection - PUBLIC READ
+    match /outfits/{outfitId} {
+      allow read: if true; // Public read access - curated content is public
+      allow write: if false; // Only admins can write (handled via backend/admin)
     }
     
     // User sessions - users can create their own sessions
@@ -100,15 +106,21 @@ service cloud.firestore {
       allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
     }
     
-    // Curated collections - read-only for authenticated users
+    // Curated collections - PUBLIC READ (anyone can view)
     match /curated_collections/{collectionId} {
-      allow read: if request.auth != null;
+      allow read: if true; // Public read access - curated content is public
       allow write: if false; // Admin-only (use Firebase Admin SDK)
       
       match /outfits/{outfitId} {
-        allow read: if request.auth != null;
+        allow read: if true; // Public read access
         allow write: if false; // Admin-only
       }
+    }
+    
+    // New top-level outfits collection - PUBLIC READ
+    match /outfits/{outfitId} {
+      allow read: if true; // Public read access - curated content is public
+      allow write: if false; // Only admins can write (handled via backend/admin)
     }
     
     // User sessions - users can create their own sessions
@@ -140,10 +152,11 @@ After applying the rules, test them by:
 
 ## Important Notes
 
-- These rules ensure users can only access their own profile data
-- All operations require authentication (`request.auth != null`)
-- Users can only read/write documents where `request.auth.uid == userId`
-- The rules prevent unauthorized access to other users' data
+- **Curated Collections & Outfits**: Public read access (no authentication required) - these are public content
+- **User Profiles**: Users can only access their own profile data (authentication required)
+- **Saved Outfits**: Users can only access their own saved outfits (authentication required)
+- **User Sessions**: Users can only create/read their own sessions (authentication required)
+- All write operations on curated content require admin access (via Firebase Admin SDK)
 - Always test rules in the Firebase Console Rules Playground before deploying
 
 ## Security Best Practices

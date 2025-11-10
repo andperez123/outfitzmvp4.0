@@ -1,10 +1,33 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { analytics } from '../firebase-config';
 import { logEvent } from 'firebase/analytics';
 import './CuratedOutfitCard.css';
 
 const CuratedOutfitCard = ({ outfit, collectionId, onUseOutfit }) => {
-    const handleRetailerClick = (retailerName, productUrl) => {
+    const navigate = useNavigate();
+
+    const handleCardClick = () => {
+        // Track analytics event
+        if (analytics) {
+            try {
+                logEvent(analytics, 'outfit_card_clicked', {
+                    outfit_id: outfit.id,
+                    collection_id: collectionId,
+                    outfit_title: outfit.title
+                });
+            } catch (error) {
+                console.log('Analytics not available:', error);
+            }
+        }
+        
+        // Navigate to outfit detail page
+        navigate(`/outfit/${outfit.id}`);
+    };
+
+    const handleRetailerClick = (e, retailerName, productUrl) => {
+        // Stop event propagation to prevent card click
+        e.stopPropagation();
         // Track analytics event
         if (analytics) {
             try {
@@ -56,7 +79,7 @@ const CuratedOutfitCard = ({ outfit, collectionId, onUseOutfit }) => {
     const totalPrice = calculateTotalPrice();
 
     return (
-        <div className="curated-outfit-card">
+        <div className="curated-outfit-card" onClick={handleCardClick}>
             <div className="outfit-card-image-container">
                 {outfit.imageUrl ? (
                     <img 
@@ -64,8 +87,10 @@ const CuratedOutfitCard = ({ outfit, collectionId, onUseOutfit }) => {
                         alt={outfit.title} 
                         className="outfit-card-image"
                         onError={(e) => {
+                            e.target.onerror = null;
                             e.target.src = '/Logo.png';
                         }}
+                        loading="lazy"
                     />
                 ) : (
                     <div className="outfit-card-placeholder">
@@ -100,7 +125,7 @@ const CuratedOutfitCard = ({ outfit, collectionId, onUseOutfit }) => {
                                     {product.retailerUrl && (
                                         <button
                                             className="product-link-btn"
-                                            onClick={() => handleRetailerClick(product.retailerName || 'Unknown', product.retailerUrl)}
+                                            onClick={(e) => handleRetailerClick(e, product.retailerName || 'Unknown', product.retailerUrl)}
                                         >
                                             Shop {product.retailerName || 'Here'}
                                         </button>
@@ -120,7 +145,10 @@ const CuratedOutfitCard = ({ outfit, collectionId, onUseOutfit }) => {
 
                 <button 
                     className="use-outfit-btn"
-                    onClick={handleUseOutfit}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleUseOutfit();
+                    }}
                 >
                     Use this Outfit
                 </button>

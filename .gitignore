@@ -35,6 +35,11 @@ functions/node_modules/
 functions/.env
 functions/.env.*
 
+# Service Account Keys (NEVER COMMIT THESE!)
+**/serviceAccountKey.json
+scripts/serviceAccountKey.json
+*-firebase-adminsdk-*.json
+
 # IDE
 .vscode/
 .idea/

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useProfile } from '../hooks/useProfile';
 import { fetchCuratedCollections, fetchCollectionOutfits, saveOutfitSession } from '../services/curatedOutfitsService';
 import CuratedOutfitCard from './CuratedOutfitCard';
 import './CuratedOutfitsSection.css';
 
 const CuratedOutfitsSection = () => {
-    const { user } = useProfile();
+    const { user, gender } = useProfile();
     const [collections, setCollections] = useState([]);
     const [selectedCollection, setSelectedCollection] = useState(null);
     const [outfits, setOutfits] = useState([]);
@@ -13,46 +13,61 @@ const CuratedOutfitsSection = () => {
     const [error, setError] = useState(null);
     const [savingSession, setSavingSession] = useState(false);
 
-    useEffect(() => {
-        loadCollections();
-    }, []);
-
-    useEffect(() => {
-        if (selectedCollection) {
-            loadOutfits(selectedCollection.id);
-        }
-    }, [selectedCollection]);
-
-    const loadCollections = async () => {
+    const loadCollections = useCallback(async () => {
         try {
             setLoading(true);
+            setError(null);
             const fetchedCollections = await fetchCuratedCollections();
             setCollections(fetchedCollections);
             
-            // Auto-select first collection if available
-            if (fetchedCollections.length > 0 && !selectedCollection) {
-                setSelectedCollection(fetchedCollections[0]);
-            }
+            // Auto-select first collection if available (only if no collection is selected)
+            setSelectedCollection(prev => {
+                if (!prev && fetchedCollections.length > 0) {
+                    return fetchedCollections[0];
+                }
+                return prev;
+            });
         } catch (err) {
             console.error('Error loading collections:', err);
             setError('Failed to load curated collections');
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    const loadOutfits = async (collectionId) => {
+    const loadOutfits = useCallback(async (collectionId) => {
         try {
             setLoading(true);
-            const fetchedOutfits = await fetchCollectionOutfits(collectionId);
+            setError(null);
+            // Apply gender filter based on user profile
+            const filters = {};
+            if (user && gender) {
+                filters.gender = gender;
+            }
+            const fetchedOutfits = await fetchCollectionOutfits(collectionId, filters);
+            console.log(`Loaded ${fetchedOutfits.length} outfits for collection ${collectionId}`);
             setOutfits(fetchedOutfits);
+            if (fetchedOutfits.length === 0) {
+                console.warn(`No outfits found for collection ${collectionId}`);
+            }
         } catch (err) {
             console.error('Error loading outfits:', err);
-            setError('Failed to load outfits');
+            setError(`Failed to load outfits: ${err.message}`);
+            setOutfits([]); // Clear outfits on error
         } finally {
             setLoading(false);
         }
-    };
+    }, [user, gender]);
+
+    useEffect(() => {
+        loadCollections();
+    }, [loadCollections]);
+
+    useEffect(() => {
+        if (selectedCollection) {
+            loadOutfits(selectedCollection.id);
+        }
+    }, [selectedCollection, loadOutfits]);
 
     const handleUseOutfit = async (outfit, collectionId) => {
         if (!user) {
@@ -98,8 +113,20 @@ const CuratedOutfitsSection = () => {
         );
     }
 
-    if (collections.length === 0) {
-        return null;
+    if (collections.length === 0 && !loading && !error) {
+        // Show message when no collections exist (likely need to seed data)
+        return (
+            <div className="curated-outfits-section">
+                <div className="curated-outfits-header">
+                    <h2 className="section-title">Curated Outfits</h2>
+                    <p className="section-subtitle">Ready-to-wear outfits selected by our stylists</p>
+                </div>
+                <div className="empty-state">
+                    <p>No curated outfits available yet. Check back soon!</p>
+                    <p className="empty-state-hint">Collections need to be added to Firestore.</p>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -138,6 +165,11 @@ const CuratedOutfitsSection = () => {
             ) : outfits.length === 0 ? (
                 <div className="empty-state">
                     <p>No outfits available in this collection.</p>
+                    {user && gender && (
+                        <p className="empty-state-hint">
+                            Try changing your gender preference or check back later for more outfits.
+                        </p>
+                    )}
                 </div>
             ) : (
                 <div className="outfits-grid">
